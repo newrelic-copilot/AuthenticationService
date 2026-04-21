@@ -10,6 +10,9 @@ plugins {
 group = "org.example"
 version = "1.0-SNAPSHOT"
 
+// Override embedded Tomcat version to 9.0.86+ to mitigate CVE-2024-24549 (HTTP/2 DoS via improper input validation)
+extra["tomcat.version"] = "9.0.86"
+
 repositories {
     mavenCentral()
 }
