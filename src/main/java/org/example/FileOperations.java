@@ -4,6 +4,7 @@ import Model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -11,6 +12,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class FileOperations {
+    static final long MAX_UPLOAD_SIZE_BYTES = 10L * 1024 * 1024;
+    static final long MAX_FILE_SIZE_BYTES = 5L * 1024 * 1024;
+    static final long MAX_FILE_COUNT = 5L;
+    static final int MAX_PART_HEADER_SIZE_BYTES = 512;
+
     public void fewMore() {
         System.out.println("Hello, Vulnerable World!");
         processFileName(" myFile.txt ");
@@ -28,11 +34,22 @@ public class FileOperations {
         System.out.println("Stripped string: '" + StringUtils.strip(text) + "'");
     }
 
-    public static void fileUploadExample() {
+    public static ServletFileUpload createSecureFileUpload() {
         DiskFileItemFactory factory = new DiskFileItemFactory();
         File tempDir = new File(System.getProperty("java.io.tmpdir"));
         factory.setRepository(tempDir);
-        System.out.println("File upload factory created.");
+
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        upload.setFileSizeMax(MAX_FILE_SIZE_BYTES);
+        upload.setSizeMax(MAX_UPLOAD_SIZE_BYTES);
+        upload.setFileCountMax(MAX_FILE_COUNT);
+        upload.setPartHeaderSizeMax(MAX_PART_HEADER_SIZE_BYTES);
+        return upload;
+    }
+
+    public static void fileUploadExample() {
+        ServletFileUpload upload = createSecureFileUpload();
+        System.out.println("File upload factory created with request limit " + upload.getSizeMax() + " bytes.");
     }
 
 //    public static void useJackson() {
@@ -71,4 +88,3 @@ public class FileOperations {
         System.out.println("Spring's ObjectMapper created: " + springObjectMapper.getClass().getName());
     }
 }
-

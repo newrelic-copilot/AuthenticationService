@@ -91,9 +91,7 @@ public class Main {
     }
 
     public static void fileUploadExample() {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        File tempDir = new File(System.getProperty("java.io.tmpdir"));
-        factory.setRepository(tempDir);
+        FileOperations.createSecureFileUpload();
         System.out.println("File upload factory created.");
     }
 
